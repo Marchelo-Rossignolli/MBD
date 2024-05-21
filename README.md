@@ -4,118 +4,116 @@ Modelagem de Banco de Dados - Marcelo Rossignolli
 
 ---
 
-# Documentação do Modelo Relacional da Frutaria
+# Modelo de Banco de Dados: Relacionamento 1:N e N:N
 
-## Visão Geral
+## Objetivo
 
-Este documento descreve o modelo relacional de banco de dados para uma frutaria, projetado para gerenciar produtos, categorias, fornecedores e vendas, aplicando rigorosamente os princípios de relacionamentos 1:N e N:N.
+O objetivo é aplicar rigorosamente os princípios de relacionamento 1:N (um para muitos), N:N (muitos para muitos) e as conexões entre chaves primárias e estrangeiras, respeitando as regras de negócio definidas pelo parceiro desde a primeira sprint.
 
-## Tabelas e Relacionamentos
+## Descrição do Modelo
 
-### 1. Produtos
+O modelo de banco de dados foi projetado para representar e gerenciar eficientemente as relações entre entidades. As tabelas principais incluem `organizacao`, `usuario`, `postagem`, e `comentario`. As tabelas auxiliares incluem `foto_perfil`, `tipo`, `voluntariado` e `comentario_post`.
 
-**Descrição:** Tabela que armazena informações sobre os produtos disponíveis na frutaria.
+<div align="center">
+<img src='MBD.png' alt='Modelo de base de dados'><br>
+</div>
+<br>
 
-- **ID** (Primary Key): Identificador único do produto.
-- **NomeProduto**: Nome do produto.
-- **Preço**: Preço do produto.
-- **QuantidadeEmEstoque**: Quantidade disponível em estoque.
-- **IDCategoria** (Foreign Key): Referência à tabela `Categorias`.
-- **IDFornecedor** (Foreign Key): Referência à tabela `Fornecedores`.
+### Tabelas Principais
 
-**SQL:**
-```sql
-CREATE TABLE Produtos (
-    ID INT PRIMARY KEY,
-    NomeProduto VARCHAR(100),
-    Preco DECIMAL(10, 2),
-    QuantidadeEmEstoque INT,
-    IDCategoria INT,
-    IDFornecedor INT,
-    FOREIGN KEY (IDCategoria) REFERENCES Categorias(ID),
-    FOREIGN KEY (IDFornecedor) REFERENCES Fornecedores(ID)
-);
-```
+#### Tabela `organizacao`
 
-### 2. Categorias
+- **Campos**:
+  - `id`: Identificador único da organização.
+  - `descricao`: Descrição da organização.
+  - `horas_de_trabalho`: Número de horas de trabalho.
+  - `avaliacao`: Avaliação da organização.
+  - `posts`: Relacionamento com a tabela `postagem`.
+  - `id_voluntariado`: Relacionamento com a tabela `voluntariado`.
+  - `id_acoes`: Relacionamento com a tabela `acoes`.
+  - `permissoes`: Permissões associadas à organização.
+  - `senha`: Senha da organização.
+  - `email`: Email da organização.
+  - `cnpj`: CNPJ da organização.
+  - `id_foto_perfil`: Relacionamento com a tabela `foto_perfil`.
+  - `nome`: Nome da organização.
+  - `tipo`: Relacionamento com a tabela `tipo`.
 
-**Descrição:** Tabela que armazena as categorias dos produtos.
+#### Tabela `usuario`
 
-- **ID** (Primary Key): Identificador único da categoria.
-- **NomeCategoria**: Nome da categoria.
+- **Campos**:
+  - `id`: Identificador único do usuário.
+  - `senha`: Senha do usuário.
+  - `email`: Email do usuário.
+  - `cpf`: CPF do usuário.
+  - `id_foto_perfil`: Relacionamento com a tabela `foto_perfil`.
+  - `permissoes`: Permissões associadas ao usuário.
+  - `horas_de_trabalho`: Número de horas de trabalho do usuário.
+  - `descricao`: Descrição do usuário.
+  - `posts`: Relacionamento com a tabela `postagem`.
+  - `tags`: Tags associadas ao usuário.
 
-**SQL:**
-```sql
-CREATE TABLE Categorias (
-    ID INT PRIMARY KEY,
-    NomeCategoria VARCHAR(100)
-);
-```
+#### Tabela `postagem`
 
-### 3. Fornecedores
+- **Campos**:
+  - `id`: Identificador único da postagem.
+  - `data`: Data da postagem.
+  - `hora`: Hora da postagem.
+  - `id_foto_perfil`: Relacionamento com a tabela `foto_perfil`.
+  - `descricao`: Descrição da postagem.
+  - `comentario`: Relacionamento com a tabela `comentario_post`.
+  - `nome`: Nome da postagem.
 
-**Descrição:** Tabela que armazena informações sobre os fornecedores.
+#### Tabela `comentario`
 
-- **ID** (Primary Key): Identificador único do fornecedor.
-- **NomeFornecedor**: Nome do fornecedor.
-- **Contato**: Informações de contato do fornecedor.
-- **Endereco**: Endereço do fornecedor.
+- **Campos**:
+  - `id`: Identificador único do comentário.
+  - `conteudo`: Conteúdo do comentário.
+  - `id_foto_perfil`: Relacionamento com a tabela `foto_perfil`.
+  - `hora`: Hora do comentário.
+  - `nome`: Nome do comentário.
 
-**SQL:**
-```sql
-CREATE TABLE Fornecedores (
-    ID INT PRIMARY KEY,
-    NomeFornecedor VARCHAR(100),
-    Contato VARCHAR(100),
-    Endereco VARCHAR(200)
-);
-```
+### Tabelas Auxiliares
 
-### 4. Vendas
+#### Tabela `foto_perfil`
 
-**Descrição:** Tabela que armazena informações sobre as vendas realizadas.
+- **Campos**:
+  - `id`: Identificador único da foto de perfil.
 
-- **ID** (Primary Key): Identificador único da venda.
-- **DataVenda**: Data em que a venda foi realizada.
-- **TotalVenda**: Valor total da venda.
+#### Tabela `tipo`
 
-**SQL:**
-```sql
-CREATE TABLE Vendas (
-    ID INT PRIMARY KEY,
-    DataVenda DATE,
-    TotalVenda DECIMAL(10, 2)
-);
-```
+- **Campos**:
+  - `id`: Identificador único do tipo.
+  - `empresa`: Nome da empresa.
+  - `ong`: Nome da ONG.
 
-### 5. Vendas_Produtos
+#### Tabela `voluntariado`
 
-**Descrição:** Tabela associativa que conecta `Vendas` e `Produtos`, representando o relacionamento N:N.
+- **Campos**:
+  - `id`: Identificador único do voluntariado.
+  - `id_usuario`: Relacionamento com a tabela `usuario`.
+  - `id_acao`: Relacionamento com a tabela `acoes`.
 
-- **IDVenda** (Foreign Key): Referência à tabela `Vendas`.
-- **IDProduto** (Foreign Key): Referência à tabela `Produtos`.
-- **QuantidadeVendida**: Quantidade do produto vendida na venda específica.
+#### Tabela `comentario_post`
 
-**SQL:**
-```sql
-CREATE TABLE Vendas_Produtos (
-    IDVenda INT,
-    IDProduto INT,
-    QuantidadeVendida INT,
-    PRIMARY KEY (IDVenda, IDProduto),
-    FOREIGN KEY (IDVenda) REFERENCES Vendas(ID),
-    FOREIGN KEY (IDProduto) REFERENCES Produtos(ID)
-);
-```
+- **Campos**:
+  - `id_comentario`: Relacionamento com a tabela `comentario`.
+  - `id_postagem`: Relacionamento com a tabela `postagem`.
 
-## Relacionamentos
+### Relações N:N
 
-### 1:N (Um para Muitos)
-- **Produtos** para **Categorias**: Um produto pertence a uma categoria.
-- **Produtos** para **Fornecedores**: Um produto é fornecido por um fornecedor.
-- **Vendas** para **Vendas_Produtos**: Uma venda pode incluir vários produtos.
-- **Produtos** para **Vendas_Produtos**: Um produto pode ser vendido em várias vendas.
+#### acoes-usuario
 
-### N:N (Muitos para Muitos)
-- **Vendas** para **Produtos** através da tabela **Vendas_Produtos**: Uma venda pode conter vários produtos, e um produto pode ser incluído em várias vendas.
+- **Entidades Envolvidas**: `acoes` e `usuario`
+- **Relacionamento**: Um usuário pode realizar várias ações e uma ação pode pertencer a vários usuários.
+- **Tipo de Relacionamento**: N:N usando uma tabela intermediária (`voluntariado`).
 
+#### permissoes-usuario
+
+- **Entidades Envolvidas**: `permissoes` e `usuario`
+- **Relacionamento**: Um usuário pode ter várias permissões e uma permissão pode pertencer a vários usuários.
+- **Tipo de Relacionamento**: N:N.
+
+## Análise de Negócios
+
+A Tabela foi criada com o intuito de armazenar os dados necessários para a elaboração do projeto "VTM", em parceria com a ONG Parceiros Voluntários, que visa a idealização de um "Market Place" reunindo diversos trabalhos voluntários por todo o país, vacilitando assim a prática da atividade.
